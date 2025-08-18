@@ -1,0 +1,118 @@
+# .github/workflows/deploy.yml 
+name: Provision, Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/team-tasks:latest
+
+jobs:
+  terraform:
+    name: Provision EC2 with Terraform
+    runs-on: ubuntu-latest
+    outputs:
+      ec2_ip: ${{ steps.output_ip.outputs.ec2_ip }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: List files in Iac/terraform (debugging)
+        run: ls -R ./Iac/terraform
+
+      - name: Init Terraform
+        working-directory: ./Iac/terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ./Iac/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_LOG: DEBUG
+        run: terraform plan
+
+      - name: Apply Terraform
+        working-directory: ./Iac/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_LOG: DEBUG
+        run: terraform apply -auto-approve
+
+      - name: Get EC2 IP
+        id: output_ip
+        working-directory: ./Iac/terraform
+        run: |
+          echo "ec2_ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build & Push Docker Image and into AWS
+    runs-on: ubuntu-latest
+    needs: terraform
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_NAME }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: SSH & Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: [build, terraform]  # <- FIXED: added terraform here
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ needs.terraform.outputs.ec2_ip }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            sudo mkdir -p /opt/team-tasks
+
+            # Create .env file with secrets
+            echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" | sudo tee /opt/team-tasks/.env > /dev/null
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" | sudo tee -a /opt/team-tasks/.env > /dev/null
+            echo "PORT=3000" | sudo tee -a /opt/team-tasks/.env > /dev/null
+            sudo chmod 600 /opt/team-tasks/.env
+
+            # Docker deploy
+            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            sudo docker pull ${{ env.IMAGE_NAME }}
+            sudo docker rm -f team-tasks || true
+            sudo docker run -d --name team-tasks --restart unless-stopped --env-file /opt/team-tasks/.env -p 3000:3000 ${{ env.IMAGE_NAME }}
+
+            # Health check
+            sleep 5
+            curl -f http://localhost:3000/api/healthz || (echo "Health check failed!" && exit 1)
