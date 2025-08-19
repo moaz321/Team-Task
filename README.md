@@ -39,27 +39,18 @@ A production-ready, minimal task app with user authentication
 - **Infra**: Provisioned via Terraform on AWS (minimal EC2 VM with public IP).
 - **CI/CD**: GitHub Actions builds the Docker image to GHCR and deploys via Terraform on AWS.
 # Supabase Setup
-
- Start by creating a new project at Supabase
- Open the SQL Editor, then run the contents of supabase/schema.sql to create the tasks table and apply Row-Level 
- Security (RLS) rules.
- Optional Populate test data using supabase/seed.sql — be sure to replace the owner UUID with a real user ID from 
- your Supabase Auth.
-
- In the Authentication > URL Configuration section:
-
- Set your dev URL (e.g. http://localhost:3000) and 
-
- Production URL (your EC2 public IP or domain, if set).
-
- Create the following environment variables for local use and CI/CD:
-
- NEXT_PUBLIC_SUPABASE_URL
-
- NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-Optional for server-side logic SUPABASE_URL, SUPABASE_ANON_KEY
-
+- Create a new project at [Supabase](https://supabase.com).
+- Open the **SQL Editor**, then run:
+  - `supabase/schema.sql` → sets up the tasks table and RLS policies.
+- _(Optional)_ Run `supabase/seed.sql` to insert test data.
+  - Replace the `owner` UUID with a real user ID from Supabase Auth.
+- In **Authentication > URL Configuration**:
+  - Set the **Site URL** to your development URL (e.g. `http://localhost:3000`).
+  - Set the **Production URL** to your EC2 public IP (or domain if you have one).
+- Create the following environment variables for local development and GitHub Actions:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - _(Optional for server-side)_ `SUPABASE_URL`, `SUPABASE_ANON_KEY`
 # Note: Only the anon key is used client-side — RLS is in place to ensure data access is properly restricted per user.
 
 #  Local Development
