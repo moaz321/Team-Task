@@ -1,4 +1,4 @@
-# deploy.yml: One-Click Full Flow
+#  deploy.yml: One-Click Full Flow
 name: Provision, Build & Deploy
 
 on:
@@ -105,4 +105,4 @@ jobs:
             sudo docker run -d --name team-tasks --restart unless-stopped --env-file /opt/team-tasks/.env -p 80:3000 ${{ env.IMAGE_NAME }}
 
             sleep 5
-            curl -f http://localhost/api/healthz || (echo "❌ Health check failed!" && exit 1)
+            curl -f http://localhost/api/healthz || (echo " Health check failed!" && exit 1)
