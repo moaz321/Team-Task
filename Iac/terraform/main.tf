@@ -76,4 +76,6 @@ resource "aws_instance" "vm" {
 
   tags = { Name = "${var.prefix}-vm" }
 }
-
+output "public_ip" {
+  value = aws_instance.vm.public_ip
+}
