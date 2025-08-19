@@ -70,35 +70,35 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
  
  No reverse proxy yet: The app is served directly on port 80 via Docker. Consider adding Caddy or Nginx later for HTTPS.
  
-# 5. # How to Verify the APP
-    # Local build works
-    ```bash
-    npm run build
-    ```
-      App runs locally
-    ```bash
-      curl http://localhost:3000/api/healthz
-    ```
-      Should return { "status": "ok" }
+# 5  How to Verify the APP
+  # Local build works
+  ```bash
+  npm run build
+  ```
+  App runs locally
+  ```bash
+  curl http://localhost:3000/api/healthz
+  ```
+  Should return { "status": "ok" }
 
-     Supabase setup is complete
+  Supabase setup is complete
      RLS should be enforced
      supabase/schema.sql has been applied
      env contains valid Supabase keys
 
-     Terraform provisions EC2
-    ```bash
-      terraform init
-      terraform apply -auto-approve \
-      -var 'prefix=team-tasks' \
-      -var 'ssh_public_key=ssh-rsa AAAA...'
-     ```
+ Terraform provisions EC2
+  ```bash
+  terraform init
+  terraform apply -auto-approve \
+  -var 'prefix=team-tasks' \
+  -var 'ssh_public_key=ssh-rsa AAAA...'
+   ```
 
-    # After deploy, verify:
-     ```bash
-     curl http://<your-ec2-public-ip>/api/healthz  
-     Should return { "status": "ok" }
-     ```
+  # After deploy, verify:
+   ```bash
+   curl http://<your-ec2-public-ip>/api/healthz  
+   Should return { "status": "ok" }
+   ```
 
 # 5. GitHub Actions deploys image, SSHes into EC2, updates container
  Final app should be accessible via http://<EC2-IP>
