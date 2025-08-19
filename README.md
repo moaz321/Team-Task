@@ -70,7 +70,7 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
  
  No reverse proxy yet: The app is served directly on port 80 via Docker. Consider adding Caddy or Nginx later for HTTPS.
  
- 5. # How to Verify the APP
+# 5. # How to Verify the APP
     # Local build works
     ```bash
     npm run build
