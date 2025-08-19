@@ -115,4 +115,4 @@ jobs:
 
             # Health check
             sleep 5
-            curl -f http://localhost/api/healthz || (echo "Health check failed!" && exit 1)
+            curl -f http://localhost:3000/api/healthz || (echo "Health check failed!" && exit 1)
