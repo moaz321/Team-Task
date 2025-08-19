@@ -101,8 +101,10 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
    ```
 
 # 5. GitHub Actions deploys image, SSHes into EC2, updates container
- Final app should be accessible via http://<EC2-IP>
-
+ Final app should be accessible via 
+ ```bash
+ http://<EC2-IP>
+ ```
  # Compliance & Security Considerations
 
  This project follows best practices that can support compliance with security standards like ISO 27001 or PCI-DSS, including:
