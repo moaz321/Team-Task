@@ -1,5 +1,5 @@
 A production-ready, minimal task app with user authentication
-#                                      +----------------------+
+#                                     +----------------------+ 
                                       |   GitHub Actions     |
                                       |  Build & Deploy Flow |
                                       +----------+-----------+
@@ -30,8 +30,8 @@ A production-ready, minimal task app with user authentication
      | - Auth (Magic Link)|
      | - RLS-secured DB   |
      +--------------------+
-2. 🧪 Local Development
-# Install dependencies
+# 2. 🧪 Local Development
+ Install dependencies
 ```bash
 npm install
 # or
@@ -40,7 +40,9 @@ yarn install
 pnpm install
 ```
 # Set environment variables
-cp .env.example .env.local
+```bash
+vim .env.local
+```
 # Fill in .env.local with:
  NEXT_PUBLIC_SUPABASE_URL=...
  NEXT_PUBLIC_SUPABASE_ANON_KEY=...
@@ -96,5 +98,22 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
 
 # 5. GitHub Actions deploys image, SSHes into EC2, updates container
  Final app should be accessible via http://<EC2-IP>
+
+ # Compliance & Security Considerations
+
+ This project follows best practices that can support compliance with security standards like ISO 27001 or PCI-DSS, including:
+
+ Data security via RLS: Supabase enforces row-level security (RLS) to isolate user data, meeting principles of least privilege.
+
+ Access control: Auth is handled via Supabase’s Magic Link (OTP over email), providing passwordless and auditable login.
+
+ Infrastructure-as-Code: Terraform is used for reproducible cloud environments (AWS), a core principle in ISO 27001 for system integrity.
+
+ CI/CD logging: GitHub Actions logs every build and deployment, supporting audit trails.
+
+ Secrets management: Sensitive credentials (Supabase keys, SSH private key) are stored in GitHub Secrets, not in code.
+
+ While this template doesn’t guarantee full compliance, it can serve as a secure foundation. To meet formal compliance, further controls such as encryption-at- 
+ rest, vulnerability scanning, logging/monitoring, disaster recovery, and organizational policies are required.
 
 
