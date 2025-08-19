@@ -1,4 +1,3 @@
-moaz@user:~/Music/projects/infra/terraform$ cat terraform.tfvars 
 aws_region     = "us-east-2"
 prefix         = "team-tasks"
 instance_type  = "t2.micro"
