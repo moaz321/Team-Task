@@ -32,12 +32,12 @@ A production-ready, minimal task app with user authentication
      +--------------------+
 
 # Features of Project
-Auth: Supabase Link (Email OTP).
-Tasks CRUD: id, title, status (todo|doing|done), Whos's owner.
-RLS: Users can only access their own rows.
-Healthcheck: /api/healthz for Docker/uptime checks.
-Infra: Terraform (AWS) provisions a minimal VM (public IP).
-CI/CD: GitHub Actions builds image to GHCR and deploys via terraform on AWS.
+- **Auth**: Supabase Magic Link (Email OTP).
+- **Tasks CRUD**: `id`, `title`, `status` (`todo` | `doing` | `done`), and `owner`.
+- **RLS**: Users can only access their own rows via Supabase Row-Level Security.
+- **Healthcheck**: `/api/healthz` endpoint for Docker and uptime monitoring.
+- **Infra**: Provisioned via Terraform on AWS (minimal EC2 VM with public IP).
+- **CI/CD**: GitHub Actions builds the Docker image to GHCR and deploys via Terraform on AWS.
 #  Local Development
  Install dependencies
 ```bash
