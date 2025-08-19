@@ -1,4 +1,4 @@
-#  main.yml: One-Click Full Flow
+# deploy.yml: One-Click Full Flow
 name: Provision, Build & Deploy
 
 on:
@@ -22,8 +22,11 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: List files in Iac/terraform (debugging)
+        run: ls -R ./Iac/terraform  # Check files in the terraform directory
+
       - name: Init Terraform
-        working-directory: ./infra/terraform
+        working-directory: ./Iac/terraform
         run: terraform init
 
       - name: Apply Terraform
