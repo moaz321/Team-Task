@@ -30,7 +30,15 @@ A production-ready, minimal task app with user authentication
      | - Auth (Magic Link)|
      | - RLS-secured DB   |
      +--------------------+
-# 2. 🧪 Local Development
+
+# Features of Project
+-Auth: Supabase Link (Email OTP).
+-Tasks CRUD: id, title, status (todo|doing|done), Whos's owner.
+-RLS: Users can only access their own rows.
+-Healthcheck: /api/healthz for Docker/uptime checks.
+-Infra: Terraform (AWS) provisions a minimal VM (public IP).
+-CI/CD: GitHub Actions builds image to GHCR and deploys via terraform on AWS.
+#  Local Development
  Install dependencies
 ```bash
 npm install
