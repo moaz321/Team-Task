@@ -142,7 +142,7 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
  VM_SSH_KEY (.pem file paste all contents including --start-- and --end--)
  VM_USER (in case of ubuntu username is ubuntu)
  ```
- 
+ Must expose port 3000 in security inbound
  Final app should be accessible via 
  ```bash
  http://<EC2-IP:3000>
