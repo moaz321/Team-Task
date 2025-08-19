@@ -28,6 +28,13 @@ jobs:
       - name: Init Terraform
         working-directory: ./Iac/terraform
         run: terraform init
+      - name: Terraform Plan
+        working-directory: ./Iac/terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: terraform plan
 
       - name: Apply Terraform
         working-directory: ./Iac/terraform
