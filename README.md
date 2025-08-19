@@ -131,10 +131,21 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
    curl http://<your-ec2-public-ip:3000>/api/healthz  
    ```
 
-# 5. GitHub Actions deploys image, SSHes into EC2, updates container
+# 5. GitHub Actions deploys image, SSH into EC2, updates container
+ First have secrets in github repo
+ ```bash
+ AWS_ACCESS_KEY_ID
+ AWS_REGION
+ AWS_SECRET_ACCESS_KEY
+ NEXT_PUBLIC_SUPABASE_ANON_KEY
+ NEXT_PUBLIC_SUPABASE_URL
+ VM_SSH_KEY (.pem file paste all contents including --start-- and --end--)
+ VM_USER (in case of ubuntu username is ubuntu)
+ ```
+ 
  Final app should be accessible via 
  ```bash
- http://<EC2-IP>
+ http://<EC2-IP:3000>
  ```
  # Compliance & Security Considerations
 
