@@ -1,5 +1,5 @@
 A production-ready, minimal task app with user authentication
-                                      +----------------------+
+#                                      +----------------------+
                                       |   GitHub Actions     |
                                       |  Build & Deploy Flow |
                                       +----------+-----------+
@@ -42,15 +42,15 @@ pnpm install
 # Set environment variables
 cp .env.example .env.local
 # Fill in .env.local with:
-# NEXT_PUBLIC_SUPABASE_URL=...
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+ NEXT_PUBLIC_SUPABASE_URL=...
+ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 
 # Run dev server
 ```bash
 npm run dev
 pnpm dev
 ```
-4.  Trade-offs / Notes
+# 4.  Trade-offs / Notes
 
 Client-side Supabase access: The app uses Supabase's anon key directly in the frontend. RLS ensures secure access, but for finer control or logging, you could migrate to using Next.js route handlers with a service role key.
 
@@ -92,9 +92,9 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
 
     # After deploy, verify:
       curl http://<your-ec2-public-ip>/api/healthz  
-    # Should return { "status": "ok" }
+     Should return { "status": "ok" }
 
 # 5. GitHub Actions deploys image, SSHes into EC2, updates container
-# Final app should be accessible via http://<EC2-IP>
+ Final app should be accessible via http://<EC2-IP>
 
 
