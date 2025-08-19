@@ -36,7 +36,7 @@ jobs:
 
       - name: Get EC2 IP
         id: output_ip
-        working-directory: ./infra/terraform
+        working-directory: ./Iac/terraform
         run: |
           echo "ec2_ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
 
