@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A production-ready, minimal task app with user authentication
+                                      +----------------------+
+                                      |   GitHub Actions     |
+                                      |  Build & Deploy Flow |
+                                      +----------+-----------+
+                                                 |
+                                                 v
+      +------------------+         push        +--------+
+      |    Dev Machine   +-------------------> |  GHCR  |
+      +--------+---------+                    +--------+
+               |                                  |
+               | SSH + Docker                     |
+               v                                  v
+      +--------+---------+                +---------------------+
+      |   AWS EC2 (VM)   | <------------  | Pull Container Image |
+      |   Ubuntu 22.04   |                +---------------------+
+      | Runs Docker App  |
+      +--------+---------+
+               |
+     HTTP :80 → :3000
+               |
+     +---------v----------+
+     |   Next.js App      |
+     |   (App Router)     |
+     |   Supabase Client  |
+     +---------+----------+
+               |
+     +---------v----------+
+     |   Supabase (BaaS)  |
+     | - Auth (Magic Link)|
+     | - RLS-secured DB   |
+     +--------------------+
+2. 🧪 Local Development
+# Install dependencies
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+# Set environment variables
+cp .env.example .env.local
+# Fill in .env.local with:
+# NEXT_PUBLIC_SUPABASE_URL=...
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 
-## Getting Started
-
-First, run the development server:
-
+# Run dev server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
+4.  Trade-offs / Notes
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Client-side Supabase access: The app uses Supabase's anon key directly in the frontend. RLS ensures secure access, but for finer control or logging, you could migrate to using Next.js route handlers with a service role key.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ AWS EC2 over Azure: AWS was chosen due to an already working setup. Azure is equally viable and supported in the Terraform config.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+ SSH Reliability: Occasionally, SSH connection fails, but EC2 is successfully provisioned, and the app runs.
 
-## Learn More
+ No domain yet: Supabase site URLs are manually set to your AWS public IP (instead of a domain). This requires updating Supabase settings if the IP changes.
 
-To learn more about Next.js, take a look at the following resources:
+ Next.js config: If you're using next.config.ts, ensure typescript is in devDependencies or the Docker build will fail.
+ 
+ Add HTTPS (nginx/Traefik) and automatic TLS.
+ 
+ Add logs/metrics shipping (e.g., Prometheus , Loki, or Docker logs , Log Analytics).
+ 
+ No reverse proxy yet: The app is served directly on port 80 via Docker. Consider adding Caddy or Nginx later for HTTPS.
+ 
+ 5. How to Verify the APP
+    # Local build works
+    ```bash
+    npm run build
+    ```
+      App runs locally
+    ```bash
+      curl http://localhost:3000/api/healthz
+    ```
+      Should return { "status": "ok" }
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+     Supabase setup is complete
+     RLS should be enforced
+     supabase/schema.sql has been applied
+     env contains valid Supabase keys
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+     Terraform provisions EC2
+      terraform init
+      terraform apply -auto-approve \
+      -var 'prefix=team-tasks' \
+      -var 'ssh_public_key=ssh-rsa AAAA...'
 
-## Deploy on Vercel
+    # After deploy, verify:
+      curl http://<your-ec2-public-ip>/api/healthz  
+    # Should return { "status": "ok" }
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 5. GitHub Actions deploys image, SSHes into EC2, updates container
+# Final app should be accessible via http://<EC2-IP>
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
