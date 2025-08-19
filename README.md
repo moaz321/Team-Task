@@ -110,18 +110,25 @@ Client-side Supabase access: The app uses Supabase's anon key directly in the fr
      supabase/schema.sql has been applied
      env contains valid Supabase keys
 
- Terraform provisions EC2
+ # Terraform provisions EC2
+ Open your terminal and run:
+ ```bash
+ aws configure
+ ```
+ Enter your aws key and must have aws key.pem file located in terraform dir
   ```bash
-  terraform init
-  terraform apply -auto-approve \
-  -var 'prefix=team-tasks' \
-  -var 'ssh_public_key=ssh-rsa AAAA...'
-   ```
+ AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
+  ```
+ Run the following Terraform commands:
+ ```bash
+ terraform init
+ terraform plan       
+ terraform apply
+ ```
 
-  # After deploy, verify:
+  # After deploy note the public ip, verify:
    ```bash
-   curl http://<your-ec2-public-ip>/api/healthz  
-   Should return { "status": "ok" }
+   curl http://<your-ec2-public-ip:3000>/api/healthz  
    ```
 
 # 5. GitHub Actions deploys image, SSHes into EC2, updates container
