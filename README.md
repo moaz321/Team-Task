@@ -51,7 +51,8 @@ A production-ready, minimal task app with user authentication
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - _(Optional for server-side)_ `SUPABASE_URL`, `SUPABASE_ANON_KEY`
-# Note: Only the anon key is used client-side — RLS is in place to ensure data access is properly restricted per user.
+  Note: Only the anon key is used client-side — RLS is in place to ensure data access is properly restricted per 
+ user.
 
 #  Local Development
  Install dependencies
