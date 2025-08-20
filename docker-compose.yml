@@ -1,0 +1,21 @@
+
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    container_name: devops-task-app
+    ports:
+      - "80:3000"
+    env_file:
+      - .env.local   # runtime env vars
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthz"]
+      interval: 50s
+      timeout: 20s
+      retries: 8
+

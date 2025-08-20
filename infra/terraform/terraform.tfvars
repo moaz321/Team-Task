@@ -1,0 +1,5 @@
+aws_region = "us-east-2"
+prefix = "team-task"
+instance_type = "t2.micro"
+ami_id = "ami-0d1b5a8c13042c939"
+key_name = "team-tasks-key"
